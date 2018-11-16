@@ -102,8 +102,12 @@ steps['RunPA2013']={'INPUT':InputInfo(dataSet='/PAMinBiasUPC/HIRun2013-v1/RAW',l
 Run2015HI={263400: [[65,904]]}
 steps['RunHI2015VR']={'INPUT':InputInfo(dataSet='/HITrackerVirginRaw/HIRun2015-v1/RAW',label='hi2015vr',events=10000,location='STD',ls=Run2015HI)}
 
-steps['RunHI2018']={'INPUT':InputInfo(dataSet='/HIMinimumBias0/Tier0_REPLAY_vocms015-v214/RAW',label='hi2018',run=[325174],events=10000,location='STD')}
-steps['RunHI2018Reduced']={'INPUT':InputInfo(dataSet='/HIMinimumBiasReducedFormat0/Tier0_REPLAY_vocms015-v214/RAW',label='hi2018reduced',run=[325174],events=10000,location='STD')}
+#steps['RunHI2018']={'INPUT':InputInfo(dataSet='/HIMinimumBias0/Tier0_REPLAY_vocms015-v214/RAW',label='hi2018',run=[325174],events=10000,location='STD')}
+#steps['RunHI2018Reduced']={'INPUT':InputInfo(dataSet='/HIMinimumBiasReducedFormat0/Tier0_REPLAY_vocms015-v214/RAW',label='hi2018reduced',run=[325174],events=10000,location='STD')}
+
+Run2018HI={326479: [[1,23]]}
+steps['RunHI2018']={'INPUT':InputInfo(dataSet='/HIHardProbes/HIRun2018A-v1/RAW',label='hi2018',events=10000,location='STD',ls=Run2018HI)}                                                                          
+steps['RunHI2018Reduced']={'INPUT':InputInfo(dataSet='/HIMinimumBiasReducedFormat0/HIRun2018A-v1/RAW',label='hi2018reduced',events=10000,location='STD',ls=Run2018HI)}
 
 Run2012A=[191226]
 Run2012ASk=Run2012A+[]
@@ -623,7 +627,6 @@ baseDataSetRelease=[
     'CMSSW_10_4_0_pre1-PU25ns_103X_upgrade2018_realistic_v7-v2',  # 17 - fullSim PU 25ns UP18 premix library
     'CMSSW_10_3_0_pre5-103X_upgrade2018_realistic_v7-v1',  # 18 - GENSIM input for 2018 fullSim premix workflows
     ]
-
 
 # note: INPUT commands to be added once GEN-SIM w/ 13TeV+PostLS1Geo will be available
 steps['MinBiasINPUT']={'INPUT':InputInfo(dataSet='/RelValMinBias/%s/GEN-SIM'%(baseDataSetRelease[0],),location='STD')} #was [0]
@@ -1339,6 +1342,18 @@ steps['Upsilon4swithBuToKstarJPsiToMuMu_forSTEAM_13TeV_TuneCUETP8M1']=genvalid('
 steps['Upsilon4sBaBarExample_BpBm_Dstarpipi_D0Kpi_nonres_forSTEAM_13TeV_TuneCUETP8M1']=genvalid('Upsilon4sBaBarExample_BpBm_Dstarpipi_D0Kpi_nonres_forSTEAM_13TeV_TuneCUETP8M1_cfi',step1GenDefaults)
 steps['LambdaBToLambdaMuMuToPPiMuMu_forSTEAM_13TeV_TuneCUETP8M1']=genvalid('LambdaBToLambdaMuMuToPPiMuMu_forSTEAM_13TeV_TuneCUETP8M1_cfi',step1GenDefaults)
 steps['BsToMuMu_forSTEAM_13TeV_TuneCUETP8M1']=genvalid('BsToMuMu_forSTEAM_13TeV_TuneCUETP8M1_cfi',step1GenDefaults)
+
+
+# sometimes v1 won't be used - override it here - the dictionary key is gen fragment + '_' + geometry
+overrideFragments={'QQH1352T_13UP18INPUT':'2'}
+
+import re
+for key in overrideFragments:
+    for inI in steps[key]:
+        DSold=steps[key][inI].dataSet
+        DS = re.sub('v[0-9]*/','v'+overrideFragments[key]+'/',DSold.rstrip())
+        del steps[key]
+        steps[key]={'INPUT':InputInfo(dataSet=DS,location='STD')}
 
 
 #PU for FullSim
