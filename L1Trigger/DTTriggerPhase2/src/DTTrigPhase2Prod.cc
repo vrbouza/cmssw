@@ -625,8 +625,7 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 	    if(sectorTP==14) sectorTP=10;
 	    sectorTP=sectorTP-1;
 	    
-	    switch(p2_df){ 
-	    case 0:
+	    if (p2_df==0){
 	      outPhi.push_back(L1MuDTChambPhDigi((*metaPrimitiveIt).t0,
 						 slId.wheel(),
 						 sectorTP,
@@ -637,7 +636,8 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 						 1,
 						 0
 						 ));
-	    case 1:
+	    }
+	    else if(p2_pf==1){
 	      if(debug)std::cout<<"pushing back phase-2 dataformat agreement with Oscar for comparison with slice test"<<std::endl;
 	      outP2.push_back(L1MuDTChambDigi((int)round((*metaPrimitiveIt).t0/25.),   // ubx (m_bx) //bx en la orbita
 					      slId.wheel(),   // uwh (m_wheel) 
@@ -653,8 +653,9 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 					      (int)round((*metaPrimitiveIt).chi2),  // uchi2 (m_chi2Segment)
 					      -10    // urpc (m_rpcFlag)
 					      ));
-	    case 2:
-	      if(debug)std::cout<<"pushing back phase-2 dataformat carlo-federica dataformat"<<std::endl;
+	    }
+	    else if (p2_pf==2){
+	      if (debug) std::cout<<"pushing back phase-2 dataformat carlo-federica dataformat"<<std::endl;
 	      
 	      outP2Ph.push_back(L1Phase2MuDTPhDigi((int)round((*metaPrimitiveIt).t0/25.),   // ubx (m_bx) //bx en la orbita
 						   slId.wheel(),   // uwh (m_wheel)     // FIXME: It is not clear who provides this?
@@ -668,8 +669,10 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 						   (int)round((*metaPrimitiveIt).chi2),  // uchi2 (m_chi2Segment)
 						   -10    // urpc (m_rpcFlag)
 						   ));
-	    default: 
-	      cout << "That phase2df isn't valid, empty collection"<<endl;
+	    }
+	    else {
+	      cerr << "That phase2df isn't valid, empty collection"<<endl;
+	      break;
 	    }  
 	}		
 	if(p2_df==0){
@@ -1027,10 +1030,10 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 		if(debug)std::cout<<"back:(psi,psi_back)= "<<TMath::ATan((*metaPrimitiveIt).tanPhi)<<","<<psi_back<<std::endl;
 	    }
 
-	    switch(p2_df){
-	    case 0:
+	    if (p2_df==0){
 	      outPhiCH.push_back(thisTP);
-	    case 1:
+	    }
+	    else if (p2_df==1){
 	      if(debug)std::cout<<"pushing back phase-2 dataformat"<<std::endl;
 	      
 	      outP2CH.push_back(L1MuDTChambDigi((int)round((*metaPrimitiveIt).t0/25.),
@@ -1047,8 +1050,9 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 						(int)round((*metaPrimitiveIt).chi2),
 						-10
 						));
-	    case 2:
-	      if(debug)std::cout<<"pushing back carlo-federica dataformat"<<std::endl;
+	    }
+	    else if (p2_df==2){
+	      if (debug) std::cout<<"pushing back carlo-federica dataformat"<<std::endl;
 	      
 	      outP2PhCH.push_back(L1Phase2MuDTPhDigi((int)round((*metaPrimitiveIt).t0/25.),
 						     chId.wheel(),
@@ -1062,10 +1066,12 @@ void DTTrigPhase2Prod::produce(Event & iEvent, const EventSetup& iEventSetup){
 						     (int)round((*metaPrimitiveIt).chi2),
 						     -10
 						     ));
-	    default:
-	      cout << "That phase2df isn't valid, empty collection"<<endl;
-	      
 	    }
+	    else {
+	      cerr << "That phase2df isn't valid, empty collection"<<endl;
+	      break;
+	    }
+	    
 	}
   
 	if(p2_df==0){ 
