@@ -572,6 +572,9 @@ slimmedTausUpdated = cms.EDProducer("PATTauIDEmbedder",
 )
 _tauIDSources2017v2 = cms.PSet(
         #oldDM
+        byVVLooseIsolationMVArun2v1DBoldDMwLT = cms.InputTag('patTauDiscriminationByVVLooseIsolationMVArun2v1DBoldDMwLT'), ########## COSA
+
+
         byIsolationMVArun2v1DBoldDMwLTraw2017v2 = cms.InputTag('patTauDiscriminationByIsolationMVArun2v1DBoldDMwLTraw'),
         byVVLooseIsolationMVArun2v1DBoldDMwLT2017v2 = cms.InputTag('patTauDiscriminationByVVLooseIsolationMVArun2v1DBoldDMwLT'),
         byVLooseIsolationMVArun2v1DBoldDMwLT2017v2 = cms.InputTag('patTauDiscriminationByVLooseIsolationMVArun2v1DBoldDMwLT'),
