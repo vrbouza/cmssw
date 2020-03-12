@@ -1,0 +1,13 @@
+{
+    "data2017": {
+        "global_tag" : "102X_dataRun2_v12",
+        "era"        : "Run2_2017,run2_nanoAOD_94XMiniAODv2"
+    },
+    "mc2017": {
+        "global_tag" : "102X_mc2017_realistic_v7",
+        "era"        : {
+            "v1" : "Run2_2017,run2_nanoAOD_94XMiniAODv2",
+            "v2" : "Run2_2017,run2_nanoAOD_94XMiniAODv1"
+        }
+    }
+}

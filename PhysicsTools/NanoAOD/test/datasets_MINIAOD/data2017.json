@@ -1,0 +1,16 @@
+{
+    "SingleMuon": [
+        "####INVALID####/SingleMuon/Run2017H-17Nov2017-v1/MINIAOD",
+        "/SingleMuon/Run2017H-17Nov2017-v2/MINIAOD"
+    ],
+    "DoubleMuon": [
+        "/DoubleMuon/Run2017H-17Nov2017-v1/MINIAOD"
+    ],
+    "LowEGJet": [
+        "####INVALID####/LowEGJet/Run2017H-17Nov2017-v1/MINIAOD",
+        "/LowEGJet/Run2017H-17Nov2017-v2/MINIAOD"
+    ],
+    "HighEGJet": [
+        "/HighEGJet/Run2017H-17Nov2017-v1/MINIAOD"
+    ]
+}
