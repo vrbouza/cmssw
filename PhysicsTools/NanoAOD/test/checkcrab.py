@@ -40,41 +40,39 @@ def CheckCRABTaskStatus(crabdirpath):
     return (crabdirpath, serverstatus, schedstatus, "total:{tot}-idle:{idl}-running:{rn}-transferring:{trf}-finished:{fin}-failed:{fal}".format(tot = nSubJobs, idl = nIdleSubJobs, rn = nRunningSubJobs, trf = nTransferringSubJobs, fin = nFinishedSubJobs, fal = nFailedSubJobs))
 
 
-def RelaunchCRABTask(crabdirpath):
-    options  = crabdirpath.split("/")[-1].replace("crab_", "")
+def GetInfoFromCRABLog(logpath):
+    logfile = open(logpath, "r")
 
-    sample   = options.split("_")[0] if "nu_" not in options else "_".join(options.split("_")[:2])
-    ageing   = options.split("_")[1] if "nu_" not in options else options.split("_")[2]
-    rpcuse   = options.split("_")[2] if "nu_" not in options else options.split("_")[3]
-    scenario = ""
-    outdir   = ""
-    if "noage" not in ageing: scenario = "_".join(options.split("_")[3:]) if "nu_" not in options else "_".join(options.split("_")[4:])
-
-    useyoungseg = False
-    if "youngseg" in scenario:
-        useyoungseg = True
-        scenario = scenario.replace("youngseg_", "")
-
-
-    print "\n# Task for the sample", sample, "with ageing", ageing, "with rpc use", rpcuse, "and ageing scenario", scenario, "and with young segments (not aged)" if useyoungseg else "and with aged segments."
-
-    print "# Importing CRAB output directory..."
-    logfile = open(crabdirpath + "/crab.log", "r")
+    outdir = ""; workarea = ""; dataset = ""; dg = ""; year = ""
 
     for line in logfile.readlines():
-        if "config.Data.outLFNDirBase" in line:
-            outdir = line.replace("config.Data.outLFNDirBase", "").replace(" ", "").replace("=", "").replace("'", "").replace('"', "").replace("\n", "")
+        if   "config.General.workArea"   in line:
+            workarea = line.replace("config.General.workArea", "").replace(" ", "").replace("=", "").replace("'", "").replace('"', "").replace("\n", "")
+        elif "config.Data.inputDataset"  in line:
+            dataset = line.replace("config.Data.inputDataset", "").replace(" ", "").replace("=", "").replace("'", "").replace('"', "").replace("\n", "")
+        elif "config.Data.outLFNDirBase" in line:
+            tmpstring = line.replace("config.Data.outLFNDirBase", "").replace(" ", "").replace("=", "").replace("'", "").replace('"', "").replace("\n", "").split("/")
+            dg     = tmpstring[-2]
+            year   = tmpstring[-3]
+            outdir = "/".join(tmpstring[:-3])
             break
-    if outdir == "": raise RuntimeError("FATAL: no CRAB output directory could be obtained from crab log.")
+
     logfile.close()
+    if "" in [outdir, workarea, dataset, dg, year]: raise RuntimeError("FATAL: some information from the CRAB log could not be imported. Outdir: " + outdir + ", workarea: " + workarea + ", dataset: " + dataset + ", dg: " + dg + ", year: " + year)
+
+    return outdir, workarea, dataset, dg, year
+
+
+def RelaunchCRABTask(crabdirpath):
+    print "# Importing CRAB output directory..."
+    outdir, workarea, dataset, dg, year = GetInfoFromCRABLog(crabdirpath + "/crab.log")
 
     print "# CRAB output directory is", outdir
     print "# Erasing CRAB workarea..."
     os.system("rm -rf " + crabdirpath)
 
     print "# Relaunching task..."
-    cs.LaunchCRABTask( (sample, ageing + "_" + rpcuse + "_youngseg" * useyoungseg,
-                        scenario, crabdirpath.split("/")[0], outdir) )
+    cs.LaunchCRABTask( (dataset, dg, year, workarea, outdir) )
     return
 
 
@@ -306,14 +304,7 @@ if __name__ == '__main__':
 
     if len(relaunchinglist) != 0:
         print "\n>  Initiating relaunch..."
-        if ncores != 0:
-            pool = Pool(ncores)
-            pool.map(RelaunchCRABTask, relaunchinglist)
-            pool.close()
-            pool.join()
-            del pool
-        else:
-            for job in relaunchinglist: RelaunchCRABTask(job)
+        for job in relaunchinglist: RelaunchCRABTask(job)
         print "\n> All tasks relaunched."
 
     if len(withfailedlist) != 0:
