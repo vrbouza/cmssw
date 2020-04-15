@@ -4,8 +4,6 @@ import subprocess as sp
 from multiprocessing import Pool
 from datetime import datetime
 
-#agedornot           = False
-
 
 def CheckCRABTaskStatus(crabdirpath):
     print "> Checking status for CRAB directory path", crabdirpath + "..."
@@ -28,11 +26,12 @@ def CheckCRABTaskStatus(crabdirpath):
         if schedstatus == "" and "Cannot retrieve the status_cache file" in line: schedstatus = "STATUSUNREACHABLE"
         if "Jobs status" in line:
             nSubJobs = int(line.split("(")[-1][:-1].split("/")[-1])
-        if "idle" in line and "Warning" not in line: nIdleSubJobs = int(line.split("(")[-1][:-1].split("/")[0])
-        if "running" in line and "Warning" not in line: nRunningSubJobs = int(line.split("(")[-1][:-1].split("/")[0])
-        if "transferring" in line and "Warning" not in line: nTransferringSubJobs = int(line.split("(")[-1][:-1].split("/")[0])
-        if "finished" in line and "Warning" not in line: nFinishedSubJobs = int(line.split("(")[-1][:-1].split("/")[0])
-        if "failed" in line and "Warning" not in line and "step" not in line and "(" in line: nFailedSubJobs = int(line.split("(")[-1][:-1].split("/")[0])
+        if ("idle"         in line and "Warning" not in line): nIdleSubJobs         = int(line.split("(")[-1][:-1].split("/")[0])
+        if ("running"      in line and "Warning" not in line): nRunningSubJobs      = int(line.split("(")[-1][:-1].split("/")[0])
+        if ("transferring" in line and "Warning" not in line): nTransferringSubJobs = int(line.split("(")[-1][:-1].split("/")[0])
+        if ("finished"     in line and "Warning" not in line): nFinishedSubJobs     = int(line.split("(")[-1][:-1].split("/")[0])
+        if ("failed"       in line and "Warning" not in line
+            and "step" not in line and "(" in line):           nFailedSubJobs       = int(line.split("(")[-1][:-1].split("/")[0])
 
 
     #print "  - Task with server status:   ", serverstatus + "."
@@ -58,10 +57,6 @@ def RelaunchCRABTask(crabdirpath):
 
 
     print "\n# Task for the sample", sample, "with ageing", ageing, "with rpc use", rpcuse, "and ageing scenario", scenario, "and with young segments (not aged)" if useyoungseg else "and with aged segments."
-
-    #if (agedornot and ("noage" in ageing)) or ((not agedornot) and ("noage" not in ageing)):
-        #print "# This script is not set to relaunch aged/unaged samples. Please, change the configuration at its beginning."
-        #return
 
     print "# Importing CRAB output directory..."
     logfile = open(crabdirpath + "/crab.log", "r")
