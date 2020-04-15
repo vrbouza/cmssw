@@ -6,7 +6,7 @@ from multiprocessing import Pool
 ### Settings of the launch procedure: THEY ARE EXPECTED TO BE CHANGED DEPENDING ON THE EXECUTION
 
 # This will be used to create the CRAB workarea, as well as the output folder
-name = '2020_03_12_pruebadedatos'
+name = '2020_04_15_prodcheckout'
 
 # The name will be append to the following path to set the output directory
 #outputdir = '/store/user/rodrigvi/'
@@ -19,14 +19,14 @@ list_of_years = [
   ]
 
 list_of_dataset_groups = [
-    #"All",   # All dataset groups
+    "All",   # All dataset groups
     #"DY",
     #"TT",
     #"WJets",
     #"WW",
     #"WZ",
     #"ZJ",
-    "SingleMuon",
+    #"SingleMuon",
     #"DoubleMuon",
     #"LowEGJet",
     #"HighEGJet",
@@ -72,12 +72,14 @@ if __name__ == '__main__':
     if not os.path.isdir("./" + tsk[3]): os.system("mkdir ./" + tsk[3])
 
     if len(sys.argv) > 1:
-        ncores = int(sys.argv[1])
-        print "\n> Parallelisation of CRAB task launching with", ncores, "cores"
-        pool = Pool(ncores)
-        pool.map(cs.LaunchCRABTask, tasks)
-        pool.close()
-        pool.join()
-        del pool
-    else:
-        for tsk in tasks: cs.LaunchCRABTask(tsk)
+        print "PARALLELISATION OF CRAB LAUNCHING TEMPORALY DISABLED"
+        #ncores = int(sys.argv[1])
+        #print "\n> Parallelisation of CRAB task launching with", ncores, "cores"
+        #pool = Pool(ncores)
+        #pool.map(cs.LaunchCRABTask, tasks)
+        #pool.close()
+        #pool.join()
+        #del pool
+    #else:
+        #for tsk in tasks: cs.LaunchCRABTask(tsk)
+    for tsk in tasks: cs.LaunchCRABTask(tsk)
