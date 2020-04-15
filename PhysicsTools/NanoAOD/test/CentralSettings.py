@@ -19,7 +19,7 @@ def LaunchCRABTask(tsk):
         del res
         return
 
-    print "# Launching CRAB task for year {y}, dataset group {g} and dataset {d}.".format(y = year, g = dataset_group, d = dataset)
+    print "\n# Launching CRAB task for year {y}, dataset group {g} and dataset {d}.".format(y = year, g = dataset_group, d = dataset)
     config = config()
 
     config.General.requestName = GetRequestName(dataset, year, crab_workarea)
@@ -31,6 +31,10 @@ def LaunchCRABTask(tsk):
     config.JobType.pluginName  = 'Analysis'
     config.JobType.psetName    = "./nanoAODproduction_cfg.py"
     config.JobType.pyCfgParams = GetConfigFileParameters(dataset, dataset_group, year)
+
+    #print config.JobType.pyCfgParams
+    #sys.exit()
+
     config.JobType.maxMemoryMB = 2500
     config.JobType.allowUndistributedCMSSW = True
 
@@ -48,7 +52,12 @@ def LaunchCRABTask(tsk):
     config.Data.allowNonValidInputDataset = True
 
     config.Data.outLFNDirBase    = output_folder + "/" + str(year) + "/" + dataset_group + "/"
-    #config.Data.outputDatasetTag = "_".join(dataset.split("/")[1:-1]) if
+    #config.Data.outputDatasetTag = "_".join(dataset.split("/")[1:-1])
+    config.Data.outputDatasetTag = dataset.split("/")[2]
+
+    #print dataset.split("/")[2]
+    #sys.exit()
+
 
     config.Site.storageSite = 'T2_ES_IFCA'
     #config.Site.storageSite = 'T2_CH_CERN'
@@ -180,13 +189,14 @@ def GetConfigFileParameters(dataset, dg, y):
     # Getting era
     if isinstance(cfgdict[y_]["era"], dict):
         if "v1" in cfgdict[y_]["era"] and int(y) == 2017:
-            if "RunIIFall17MiniAODv2" in dataset or IsItData(dg):
+            if "RunIIFall17MiniAODv2" in dataset and not IsItData(dg):
                 pars.append(str("Era=" + cfgdict[y_]["era"]["v2"]))
             else:
                 pars.append(str("Era=" + cfgdict[y_]["era"]["v1"]))
     else:
         pars.append(str("Era=" + cfgdict[y_]["era"]))
-
+    #print pars
+    #sys.exit()
     # Getting global tag
     if not isinstance(cfgdict[y_]["global_tag"], basestring):
         raise RuntimeError("ERROR: attempted to obtain global tag for dataset {d} inside dataset group {g} for year/supergroup {y} with nanoAOD version {v}, but there are multiple ones implemented in the JSON config. file, and this is not supported in the code.".format(y = y_, v = nanoAODv, d = dataset, g = dg))
