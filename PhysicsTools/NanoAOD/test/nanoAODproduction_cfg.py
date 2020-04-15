@@ -1,10 +1,6 @@
 import FWCore.ParameterSet.Config     as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 from Configuration.StandardSequences.Eras import eras
-from Configuration.AlCa.GlobalTag         import GlobalTag
-from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
-from PhysicsTools.PatAlgos.tools.helpers  import associatePatAlgosToolsTask
-from PhysicsTools.NanoAOD.nano_cff        import nanoAOD_customizeMC, nanoAOD_customizeData
 
 #### Importing parameters
 options = VarParsing.VarParsing()
@@ -52,14 +48,15 @@ else:
 
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1)
+    input = cms.untracked.int32(-1)
 )
 
 
 # Input source
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:mc2017_NANO_PAT.root'),
+    #fileNames = cms.untracked.vstring('file:./FC05E0FF-4737-E811-BE05-FA163EE2974F.root'),
+    fileNames = cms.untracked.vstring('file:./EC827C0E-B534-E811-8895-008CFAEA2564.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 process.options = cms.untracked.PSet(
@@ -100,6 +97,7 @@ else:
 
 
 # Other statements
+from Configuration.AlCa.GlobalTag         import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
 
 
@@ -112,15 +110,18 @@ else:              process.NANOAODSIMoutput_step = cms.EndPath(process.NANOAODSI
 
 # Schedule definition
 process.schedule = cms.Schedule(process.nanoAOD_step, process.endjob_step, process.NANOAODoutput_step if options.IsData else process.NANOAODSIMoutput_step)
+from PhysicsTools.PatAlgos.tools.helpers  import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 
 #### Customisation of the process
+from PhysicsTools.NanoAOD.nano_cff        import nanoAOD_customizeMC, nanoAOD_customizeData
 if options.IsData: process = nanoAOD_customizeData(process)
 else:              process = nanoAOD_customizeMC(process)
 process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False)))
 
 
 # Add early deletion of temporary data products to reduce peak memory need
+from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
 process = customiseEarlyDelete(process)
 # End adding early deletion
