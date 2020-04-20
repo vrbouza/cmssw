@@ -39,6 +39,7 @@ python checkcrab.py WORKAREA NCORES
 ```
 WORKAREA refers to the work area of your crab tasks (created as *analysis_* + *name*, where *name* is the homonymous variable used in multicrab) and is a compulsory argument, whereas NCORES refers to the same as before, and is optional.
 
+NOTE: sometimes, inside each CRAB task, some jobs might fail due to not having enough time to completely execute. When running checkcrab, these jobs will be indeed detected and you will be asked whether you want to resubmit those jobs or not. However, at this moment, the script does not detect the error itself and it performs a "pure" resubmit. This will  be included in the future into the script, but to succesfully execute those tasks, you should do manually a resubmit with the --maxjobruntime option, setting for example --maxjobruntime 2000.
 
 ### Production checks after executing
 Once your execution finishes, the script nanoAOD_checker.py allows you to check all produced datasets by first comparing the number of files that are produced with the number of files that are of MINIAOD, and second, by checking that the number of produced events is the same as the total number of events of the MINIAOD.
