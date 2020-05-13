@@ -81,7 +81,8 @@ if options.IsData:
             filterName = cms.untracked.string('')
         ),
         fileName = cms.untracked.string('nanoAODoutput.root'),
-        outputCommands = process.NANOAODEventContent.outputCommands
+        outputCommands = process.NANOAODEventContent.outputCommands,
+        fakeNameForCrab = cms.untracked.bool(True),
     )
 else:
     process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
@@ -93,6 +94,7 @@ else:
         ),
         fileName = cms.untracked.string('nanoAODoutput.root'),
         outputCommands = process.NANOAODSIMEventContent.outputCommands,
+        fakeNameForCrab = cms.untracked.bool(True),
     )
 
 
